@@ -1,0 +1,5 @@
+token 1: address: KT19mGbQ5BynXu6MgXse5Wf9pPhBRJsEB4qx
+    administrator: tz1bkUYFGNuTruD8B5WCXuu4YZjzynT4GL8c
+    name: TRupee
+    symbol: TR
+    decimals: 10
