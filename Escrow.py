@@ -16,6 +16,7 @@ class Escrow(sp.Contract):
             )
         )
 
+    @sp.entry_point
     def create_escrow(self, params):
         sp.set_type(
             params, sp.TRecord(
@@ -45,4 +46,27 @@ class Escrow(sp.Contract):
             price = params.price
         )
         self.data.escrow_id += 1
+
+    @sp.entry_point
+    def exchange(self, params):
+        sp.set_type(
+            params, sp.TNat
+        )
+        sp.verify(self.data.escrows[params].price == sp.amount)
+        data_type = sp.TRecord(
+            from_ = sp.TAddress,
+            to_ = sp.TAddress,
+            value = sp.TNat
+        ).layout(("from_ as from", ("to_ as to", "value")))
+        sp.contract(data_type, sp.data.escrows[params].token_address, "transfer").open_some()
+        data_to_be_sent = sp.TRecord(
+            from_ = sp.self_address,
+            to_ = sp.sender,
+            value = sp.data.escrows[params].value
+        )
+        sp.send(sp.data.escrows[params].owner, sp.amount)
+        sp.transfer(data_to_be_sent, sp.mutez(0), c)
+        del self.data.escrows[params]
         
+        
+            
