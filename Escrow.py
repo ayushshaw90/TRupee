@@ -32,13 +32,13 @@ class Escrow(sp.Contract):
             value = sp.TNat
         ).layout(("from_ as from", ("to_ as to", "value")))
         c = sp.contract(data_type, params.token_address, "transfer").open_some()
-        data_to_be_send = sp.TRecord(
+        data_to_be_send = sp.record(
             from_ = sp.sender,
             to_ = sp.self_address,
             value = params.amount
         )
         sp.transfer(data_to_be_send, sp.mutez(0), c)
-        sp.data.escrows[self.data.escrow_id] = sp.record(
+        self.data.escrows[self.data.escrow_id] = sp.record(
             owner = sp.sender,
             token_address = params.token_address,
             token_id = params.token_id,
@@ -52,21 +52,29 @@ class Escrow(sp.Contract):
         sp.set_type(
             params, sp.TNat
         )
+        sp.verify(self.data.escrows.contains(params), "Escrow ID unavailable")
         sp.verify(self.data.escrows[params].price == sp.amount)
         data_type = sp.TRecord(
             from_ = sp.TAddress,
             to_ = sp.TAddress,
             value = sp.TNat
         ).layout(("from_ as from", ("to_ as to", "value")))
-        sp.contract(data_type, sp.data.escrows[params].token_address, "transfer").open_some()
-        data_to_be_sent = sp.TRecord(
+        c=sp.contract(data_type, self.data.escrows[params].token_address, "transfer").open_some()
+        data_to_be_sent = sp.record(
             from_ = sp.self_address,
             to_ = sp.sender,
-            value = sp.data.escrows[params].value
+            value = self.data.escrows[params].amount
         )
-        sp.send(sp.data.escrows[params].owner, sp.amount)
+        sp.send(self.data.escrows[params].owner, sp.amount)
         sp.transfer(data_to_be_sent, sp.mutez(0), c)
         del self.data.escrows[params]
-        
-        
+
+if "templates" not in __name__:
+    @sp.add_test(name="Contract creation")
+    def test():
+        scenario = sp.test_scenario()
+        c1 = Escrow()
+        scenario+=c1
+    
+    
             
