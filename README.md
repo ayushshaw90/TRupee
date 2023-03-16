@@ -1,5 +1,5 @@
 # TRupee
-A decentralised cryptocurrency exchange to transact FA1.2 contract with native Tezos tokens. It is deployed in Ghostnet Test network of Tezos Blockchain.
+A decentralised cryptocurrency exchange to transact FA1.2 tokens with native Tezos tokens. It is deployed in Ghostnet Test network of Tezos Blockchain.
 
 ## Technologies Used
 ![Python](https://img.shields.io/badge/Python-20232A?style=for-the-badge&logo=python&logoColor=C12A3B)
